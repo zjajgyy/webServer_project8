@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="ThemeBucket">
+    <link rel="shortcut icon" href="#" type="image/png">
+
+    <title>Register</title>
+
+   
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style-responsive.css') }}">
+</head>
+
+<body  style="background-image:url(../static/images/bg_final.jpg)">
+
+<div class="container">
+<p>&nbsp <p>&nbsp 
+    <form class="form-signin">
+        <div class="form-signin-heading text-center">
+            <h1 class="sign-title">Registration</h1>
+            
+        </div>
+        <div class="login-wrap">
+            <input type="text" class="form-control" placeholder="Email" onblur="checkEmail(this)" id="email" name="email">
+			<p id="emailAlert" style="font-size:13px;color:red"></p>
+            <input type="password" class="form-control" placeholder="Password" id="password" name="password">
+			<input type="password" class="form-control" placeholder="Confirm Password" id="re_password" onblur="checkPassword(this)" name="re_password">
+			<p id="passwordAlert" style="font-size:13px;color:red"></p>
+			
+            <button class="btn btn-lg btn-login btn-block" style="height:45px"  onclick="return register()">
+                <p style="font-size=15px;text-align:center;color:white;line-height:30px">Register</p>
+            </button>
+
+            <div class="registration">
+                Already a member?
+                <a class="" href="http://127.0.0.1:8888/toLogin">
+                    Login
+                </a>
+            </div>
+          
+
+        </div>
+</form>
+        <!-- Modal -->
+        <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Forgot Password ?</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Enter your e-mail address below to reset your password.</p>
+                        <input type="text" name="email" placeholder="Email" autocomplete="off" class="form-control placeholder-no-fix">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+                        <button class="btn btn-primary" type="button">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- modal -->
+
+    
+
+</div>
+
+<script src="static/js/jquery-1.10.2.min.js"></script>
+<script src="../static/js/sha1.js"></script>
+<script src="static/js/bootstrap.min.js"></script>
+<script src="static/js/modernizr.min.js"></script>
+<script type="text/javascript">
+ 		function checkEmail(){
+                          
+			var email=document.getElementById("email").value;			
+                        console.log(email);
+			var myreg = new RegExp('^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$')
+			var ret_test = myreg.test(email);
+            if(!ret_test)
+           {
+                document.getElementById("emailAlert").innerHTML="Please enter correct email address";
+                myreg.focus();
+                return false;
+             }
+			 else{
+				document.getElementById("emailAlert").innerHTML="";
+				$.ajax(
+			{
+				type: 'post',
+				url:'http://127.0.0.1:8888/judge_email',
+				data:{'email':email},
+				success:function(data,textStatus)
+			{
+                                console.log(data)
+				if(data=='YES')
+				{
+				   document.getElementById("emailAlert").innerHTML="The email has been registed";
+				}
+				if(data=='None')
+				{
+				   document.getElementById("emailAlert").innerHTML="";
+				}
+			},
+				error:function(data)
+			{
+				console.log("error"+data)
+			}
+			});
+			return false
+			 }
+	}
+ 		
+		
+		function checkPassword(){
+			var password=document.getElementById("password").value;
+			var re_password=document.getElementById("re_password").value;
+           if(password != re_password)
+           {
+                document.getElementById("passwordAlert").innerHTML="The confirm password is not the same as password";
+                return false;
+             }
+			else{
+				document.getElementById("passwordAlert").innerHTML="";
+			 }
+
+ 		}
+		
+		function register(){
+			var email=document.getElementById("email").value;
+			var password=document.getElementById("password").value;
+			var re_password=document.getElementById("re_password").value;
+			if(email==''|| email==undefined ||email ==null)
+			{
+				document.getElementById("emailAlert").innerHTML="The email can't be null";
+			}
+			else if(password==''|| password==undefined ||password ==null ||re_password==''|| re_password==undefined ||re_password ==null)
+			{
+			document.getElementById("passwordAlert").innerHTML="The password or confirm password can't be null";
+			}
+			else{
+			var final_password = hex_sha1(password);
+			$.ajax({
+				type: 'post',
+				url:'http://127.0.0.1:8888/register',
+				data:{'email':email,
+					  'password':final_password},
+				success:function(data,textStatus)
+			{       
+                                console.log(data);
+				if(data=="YES")
+				{
+				window.location.href="http://127.0.0.1:8888/toLogin";
+				}
+			}
+			});
+			}
+			return false 
+		}
+	</script>
+
+</body>
+</html>

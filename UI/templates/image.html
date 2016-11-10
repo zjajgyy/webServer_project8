@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="ThemeBucket">
+  <link rel="shortcut icon" href="#" type="image/png">
+
+  <title>Form Layouts</title>
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style-responsive.css') }}">
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="js/html5shiv.js"></script>
+  <script src="js/respond.min.js"></script>
+  <![endif]-->
+
+</head>
+
+<body class="sticky-header">
+
+<section>
+    <!-- left side start-->
+    <div class="left-side sticky-left-side">
+
+        <div class="logo-icon text-center">
+            <a href="index.html"><img src="images/logo_icon.png" alt=""></a>
+        </div>
+        <!--logo and iconic logo end-->
+
+
+        <div class="left-side-inner">
+            <!--sidebar nav start-->
+            <ul class="nav nav-pills nav-stacked custom-nav">
+                <li><a href="http://127.0.0.1:8888/main_page"><i class="fa fa-home"></i> <span>System Info</span></a></li>
+				<li><a href="http://127.0.0.1:8888/image_resize"><i class="fa fa-sign-in"></i> <span>Image Resize</span></a></li>
+				
+            </ul>
+            <!--sidebar nav end-->
+
+        </div>
+    </div>
+    <!-- left side end-->
+    
+    <!-- main content start-->
+    <div class="main-content" >
+
+        
+
+        <!-- page heading start-->
+        <div class="page-heading">
+            <h3>
+                Image Resize
+            </h3>
+            <ul class="breadcrumb">
+                <li class="active"> Amazing resize </li>
+            </ul>
+        </div>
+        <!-- page heading end-->
+
+        <!--body wrapper start-->
+        <section class="wrapper">
+        <!-- page start-->
+
+        <div class="row">
+            <div class="col-lg-6">
+                <section class="panel">
+                    {%if title != "600"%}
+                    <header class="panel-heading">
+                        Original Image
+                    </header>
+                    <div class="panel-body">
+							
+							<form  class="form-group" method="POST" enctype="multipart/form-data" action="http://127.0.0.1:8888/image_resize">
+							<label for="exampleInputFile">File input</label>
+    <input type="file" name="file" />
+	<p id="typeAlert" style="font-size:13px;color:red"></p>
+								<input type="text" class="form-control" placeholder="Please input scale" onblur="checkScale(this)" id="scale" name="scale">
+								<p id="scaleAlert" style="font-size:13px;color:red"></p>
+    <input type="submit" value="Upload" />
+    </form>
+					{%else%}
+                                        <header class="panel-heading" align="center">
+				<div align="center">	Error Info</div>
+					</header>
+						<div align="center">Please upload valid picture file</div>
+					{% endif %}
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+        </div>
+       
+        <!-- page end-->
+        </section>
+        <!--body wrapper end-->
+
+      
+
+    </div>
+    <!-- main content end-->
+</section>
+
+<!-- Placed js at the end of the document so the pages load faster -->
+<script src="../static/js/jquery-1.10.2.min.js"></script>
+<script src="../static/js/bootstrap.min.js"></script>
+<script src="../static/js/modernizr.min.js"></script>
+
+
+<!--common scripts for all pages-->
+<script type="text/javascript">
+	function checkScale(){
+			var scale=document.getElementById("scale").value;	
+			console.log(scale);		
+				$.ajax({
+				type: 'post',
+				url:'http://127.0.0.1:8888/judge_scale',
+				data:{'scale':scale},
+				success:function(data,textStatus)
+			{
+				if(data=='Yes')
+				{
+				   document.getElementById("scaleAlert").innerHTML="";
+				}
+				else
+				{
+				   document.getElementById("scaleAlert").innerHTML="Please enter the correct scale";
+				}
+			}
+			});
+			return false
+		}
+		
+		
+</script> 
+</body>
+</html>

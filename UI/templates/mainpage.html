@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="ThemeBucket">
+  <link rel="shortcut icon" href="#" type="image/png">
+
+  <title>System Information</title>
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style-responsive.css') }}">
+
+</head>
+
+<body class="sticky-header" onload="showInfo()">
+<script>
+var length = document.cookie.length
+if(length==0)
+{
+alert("Please login first")
+window.location.href="http://127.0.0.1:8888/toLogin";
+}
+</script>
+<section>
+    <!-- left side start-->
+    <div class="left-side sticky-left-side">
+
+        <div class="logo-icon text-center">
+            <a href="index.html"><img src="images/logo_icon.png" alt=""></a>
+        </div>
+        <!--logo and iconic logo end-->
+
+
+        <div class="left-side-inner">
+            <!--sidebar nav start-->
+            <ul class="nav nav-pills nav-stacked custom-nav">
+                <li><a href="http://127.0.0.1:8888/main_page"><i class="fa fa-home"></i> <span>System Info</span></a></li>
+				<li><a href="http://127.0.0.1:8888/image_resize"><i class="fa fa-sign-in"></i> <span>Image_resize</span></a></li>
+            </ul>
+            <!--sidebar nav end-->
+
+        </div>
+    </div>
+    <!-- left side end-->
+    
+    <!-- main content start-->
+    <div class="main-content" >
+        <!-- page heading start-->
+        <div class="page-heading">
+        </div>
+        <!-- page heading end-->
+
+        <!--body wrapper start-->
+        <div class="wrapper">
+            <div class="row">
+                <div class="col-sm-6">
+                    <section class="panel">
+                        <header class="panel-heading">
+                            CPU Usage
+                        </header>
+                        <div class="panel-body" id="cpu" style="width: 600px;height:400px;">
+                        </div>
+                    </section>
+                </div>
+                <div class="col-sm-6">
+                    <section class="panel">
+                        <header class="panel-heading">
+                            Ram Usage
+                        </header>
+						<div class="panel-body" id="ram" style="width: 600px;height:400px;">
+                         
+                        </div>
+                    </section>
+                </div>
+            </div>
+            
+        </div>
+        <!--body wrapper end-->
+
+
+
+    </div>
+    <!-- main content end-->
+</section>
+
+<!-- Placed js at the end of the document so the pages load faster -->
+<script src="static/js/jquery-1.10.2.min.js"></script>
+<script src="static/js/jquery-ui-1.9.2.custom.min.js"></script>
+<script src="static/js/jquery-migrate-1.2.1.min.js"></script>
+<script src="static/js/bootstrap.min.js"></script>
+<script src="static/js/modernizr.min.js"></script>
+<script src="static/js/jquery.nicescroll.js"></script>
+
+<!--Chart JS-->
+<script src="static/js/chart-js/Chart.js"></script>
+<script src="../static/js/chart-js/chartjs.init.js"></script>
+<script src="../static/js/echarts.common.min.js"></script>
+<script src="../static/js/jquery-1.10.2.min.js"></script>
+
+<script type="text/javascript">
+
+function showInfo()
+{
+var length = document.cookie.length
+if(length==0)
+{
+window.location.href="http://127.0.0.1:8888/index";
+}
+
+$.ajax({
+				type: 'post',
+				url:'http://127.0.0.1:8888/get_info',
+				success:function(data,textStatus)
+			{
+			
+				var info = data.split(":");
+				var cpunumber = info[0]
+				var ramnumber = info[1]
+				   
+				   
+				           var myChart = echarts.init(document.getElementById('cpu'));
+		var myChart2 = echarts.init(document.getElementById('ram'));
+
+        var option = {
+    title : {
+        text: 'Cpu',
+        x:'35%'
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    series : [
+        {
+            name: 'CPU',
+            type: 'pie',
+            radius : '60%',
+            center: ['40%', '50%'],
+            data:[
+                {value:cpunumber, name:'Used',itemStyle: {
+        normal: {
+           color: 'rgba(95, 114, 143,1)'
+        }
+    }},
+                {value:100-cpunumber, name:'Available',itemStyle: {
+        normal: {
+            
+			 color: 'rgba(107, 197, 164,1.2)'
+        }
+    }},
+            ],
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    ]
+};
+
+
+
+var option2 = {
+    title : {
+        text: 'Ram',
+        x:'35%'
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    series : [
+        {
+            name: 'RAM',
+            type: 'pie',
+            radius : '60%',
+            center: ['40%', '50%'],
+            data:[
+                {value:ramnumber*100, name:'Used',itemStyle: {
+        normal: {
+           color: 'rgba(95, 114, 143,1)'
+        }
+    }},
+                {value:100-ramnumber*100, name:'Available',itemStyle: {
+        normal: {
+            
+			 color: 'rgba(107, 197, 164,1.2)'
+        }
+    }},
+            ],
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    ]
+};
+
+
+        myChart.setOption(option);
+		myChart2.setOption(option2);
+				   
+				   
+				
+			}
+			});
+			return false 
+} 
+</script>
+
+</body>
+</html>
